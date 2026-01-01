@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Letter 💌</title>
+
+<style>
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#ffb6c1;
+  font-family:'Segoe UI',sans-serif;
+}
+
+/* ❤️ TIM RƠI */
+.heart{
+  position:fixed;
+  top:-30px;
+  animation:fall linear forwards;
+  z-index:1;
+}
+@keyframes fall{
+  to{transform:translateY(120vh);opacity:0;}
+}
+
+/* 🖼️ ẢNH RƠI */
+.fall-img{
+  position:fixed;
+  top:-60px;
+  width:55px;
+  animation:fall linear forwards;
+  z-index:0;
+}
+
+/* 🔐 BOX MẬT KHẨU */
+#passBox{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:#fff;
+  padding:30px;
+  width:85%;
+  max-width:380px;
+  border-radius:20px;
+  text-align:center;
+  z-index:10;
+}
+#passBox h2{margin-bottom:15px}
+#passBox input{
+  width:100%;
+  padding:14px;
+  font-size:18px;
+  border-radius:10px;
+  border:1px solid #ccc;
+}
+#passBox button{
+  margin-top:15px;
+  padding:12px;
+  width:100%;
+  font-size:18px;
+  border:none;
+  background:#ff6f91;
+  color:white;
+  border-radius:10px;
+}
+
+/* 💌 PHONG BÌ */
+#envelope{
+  display:none;
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:220px;
+  height:150px;
+  background:#fff;
+  border-radius:10px;
+  cursor:pointer;
+  z-index:10;
+}
+#flap{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:#ff8fa3;
+  clip-path:polygon(0 0,100% 0,50% 50%);
+  transform-origin:top;
+  transition:0.8s;
+}
+#envelope.open #flap{
+  transform:rotateX(180deg);
+}
+#body{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:70%;
+  background:#fff;
+}
+
+/* 📜 THƯ */
+#letter{
+  display:none;
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:92%;
+  max-width:520px;
+  background:#fff;
+  padding:30px;
+  border-radius:20px;
+  z-index:20;
+}
+#letter h2{text-align:center}
+#text{
+  margin-top:15px;
+  font-size:18px;
+  line-height:1.6;
+  white-space:pre-wrap;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🎵 NHẠC -->
+<audio id="music" src="music.mp3" loop></audio>
+
+<!-- 🔐 MẬT KHẨU -->
+<div id="passBox">
+  <h2>🔐 Nhập mật khẩu</h2>
+  <input id="pass" type="password" placeholder="Nhập mật khẩu">
+  <button onclick="check()">Xác nhận</button>
+  <p id="err" style="color:red"></p>
+</div>
+
+<!-- 💌 PHONG BÌ -->
+<div id="envelope" onclick="openEnvelope()">
+  <div id="flap"></div>
+  <div id="body"></div>
+</div>
+
+<!-- 📜 THƯ -->
+<div id="letter">
+  <h2>💖 Gửi người đặc biệt</h2>
+  <div id="text"></div>
+</div>
+
+<script>
+/* 🎵 NHẠC CHẠY NGAY KHI CLICK ĐẦU */
+let musicStarted=false;
+document.addEventListener("click",()=>{
+  if(!musicStarted){
+    const m=document.getElementById("music");
+    m.volume=1;
+    m.play().catch(()=>{});
+    musicStarted=true;
+  }
+});
+
+/* ❤️ TIM RƠI DÀY */
+setInterval(()=>{
+  for(let i=0;i<3;i++){
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerHTML=["❤️","🎂","🎉","🎁"];
+    h.style.left=Math.random()*100+"vw";
+    h.style.fontSize=16+Math.random()*20+"px";
+    h.style.animationDuration=4+Math.random()*2+"s";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),6000);
+  }
+},250);
+
+/* 🖼️ ẢNH RƠI DÀY */
+const images=["1.png","2.png","3.png","4.png","5.png","6.png","7.png","8.png","9.png"];
+setInterval(()=>{
+  for(let i=0;i<2;i++){
+    const img=document.createElement("img");
+    img.src=images[Math.floor(Math.random()*images.length)];
+    img.className="fall-img";
+    img.style.left=Math.random()*90+"vw";
+    img.style.animationDuration=5+Math.random()*2+"s";
+    document.body.appendChild(img);
+    setTimeout(()=>img.remove(),7000);
+  }
+},600);
+
+/* 🔐 CHECK PASS */
+function check(){
+  if(pass.value==="02012008"){
+    passBox.style.display="none";
+    envelope.style.display="block";
+  }else{
+    err.innerText="Sai mật khẩu rồi 😢";
+  }
+}
+
+/* 💌 MỞ PHONG BÌ */
+function openEnvelope(){
+  envelope.classList.add("open");
+  setTimeout(()=>{
+    envelope.style.display="none";
+    letter.style.display="block";
+    typeText();
+  },800);
+}
+
+/* ✍️ HIỆU ỨNG GÕ CHỮ */
+const content=`Hôm nay là một ngày rất đặc biệt,
+ vì có một người mà tớ luôn trân trọng được thêm một tuổi mới.
+  Cảm ơn cậu vì đã xuất hiện, vì những khoảnh khắc cậu mang lại cho tớ những cảm xúc rất thật,
+   rất dễ thương và rất khó quên.
+
+Tuổi mới, tớ mong cậu luôn khỏe mạnh,
+ luôn vui vẻ và luôn giữ được nụ cười trên môi. Mong rằng những điều không vui sẽ dần ở lại phía sau,
+  còn phía trước là thật nhiều niềm vui, bình yên và những điều tốt đẹp đang chờ cậu.
+
+Dù hiện tại chúng ta là gì của nhau, thì với tớ, cậu vẫn là một người rất đặc biệt.
+ Tớ hy vọng trong những ngày sắp tới, cậu sẽ luôn được yêu thương, được quan tâm và được trân trọng theo cách cậu xứng đáng.
+
+Chúc cậu một sinh nhật thật ấm áp 🎂
+Một tuổi mới thật nhiều niềm vui, thật nhiều may mắn và thật nhiều hạnh phúc ✨`;
+
+let i=0;
+function typeText(){
+  if(i<content.length){
+    text.innerHTML+=content.charAt(i);
+    i++;
+    setTimeout(typeText,35);
+  }
+}
+</script>
+
+</body>
+</html>
